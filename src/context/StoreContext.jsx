@@ -6,7 +6,7 @@ import { useEffect } from "react";
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
-  const url = "http://localhost:4000";
+  const url = import.meta.env.VITE_API_URL;
   const [token, setToken] = React.useState("");
   const [cartItems, setCartItems] = React.useState([]);
   const [food_list, setFoodList] = React.useState([]);
