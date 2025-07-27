@@ -53,12 +53,7 @@ const Navbar = ({ setShowLogin }) => {
       </ul>
       <div className="navbar-right">
         <img src={assets.search_icon} alt="search" />
-        <div className="navbar-search-icon">
-          <Link to="/cart">
-            <img src={assets.basket_icon} alt="navbar-search-icon" />
-          </Link>
-          <div className={getTotalCartAmount() === 0 ? "" : "dot"}></div>
-        </div>
+
         {!token ? (
           <button onClick={() => setShowLogin(true)}>signin</button>
         ) : (
@@ -78,6 +73,14 @@ const Navbar = ({ setShowLogin }) => {
           </div>
         )}
       </div>
+      {getTotalCartAmount() !== 0 && (
+        <div className="floating-cart">
+          <Link to="/cart">
+            <img src={assets.basket_icon} alt="cart-icon" />
+          </Link>
+          <div className="dot"></div>
+        </div>
+      )}
     </div>
   );
 };
