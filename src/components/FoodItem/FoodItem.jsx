@@ -9,7 +9,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
   const imageRef = React.useRef(null);
 
   const handleAddToCart = () => {
-    addToCart(id);
+    addToCart(id, { _id: id, name, price, description, image });
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         animateProductToCart(imageRef.current, document.querySelector("[data-cart-target]"));

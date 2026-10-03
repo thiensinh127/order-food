@@ -26,8 +26,13 @@ const StoreContextProvider = ({ children }) => {
     }
   }, []);
 
-  const addToCart = async (itemId) => {
+  const addToCart = async (itemId, item) => {
     setCartItems((previous) => ({ ...previous, [itemId]: (previous[itemId] || 0) + 1 }));
+    if (item) {
+      setCartFoodList((previous) => (
+        previous.some((food) => food._id === itemId) ? previous : [...previous, item]
+      ));
+    }
     if (!token) return;
     await api.post("/api/cart/add", { itemId }, { headers: { token } });
     await loadCartData(token);
@@ -43,6 +48,9 @@ const StoreContextProvider = ({ children }) => {
       }
       return { ...previous, [itemId]: quantity };
     });
+    if (cartItems[itemId] <= 1) {
+      setCartFoodList((previous) => previous.filter((food) => food._id !== itemId));
+    }
     if (!token) return;
     await api.post("/api/cart/remove", { itemId }, { headers: { token } });
     await loadCartData(token);
@@ -54,6 +62,7 @@ const StoreContextProvider = ({ children }) => {
       delete rest[itemId];
       return rest;
     });
+    setCartFoodList((previous) => previous.filter((food) => food._id !== itemId));
     if (!token) return;
     await api.post("/api/cart/remove", { itemId, removeAll: true }, { headers: { token } });
     await loadCartData(token);
@@ -104,9 +113,11 @@ const StoreContextProvider = ({ children }) => {
     cartFoodList.reduce((total, item) => total + (cartItems[item._id] || 0) * item.price, 0)
   ), [cartFoodList, cartItems]);
 
+  const cartItemCount = Object.values(cartItems).reduce((total, quantity) => total + quantity, 0);
+
   const contextValue = {
     food_list, cartFoodList, cartItems, setCartItems, addToCart, removeFromCart, clearFromCart,
-    getTotalCartAmount, url, token, setToken, category, selectCategory,
+    getTotalCartAmount, cartItemCount, url, token, setToken, category, selectCategory,
     page, setPage, hasMore, loading, foodError, retryFoodList,
   };
 

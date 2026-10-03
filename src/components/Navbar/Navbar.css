@@ -58,16 +58,21 @@
 
 .floating-cart {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: clamp(14px, 3vw, 24px);
+  right: clamp(14px, 3vw, 24px);
   z-index: 999;
   background-color: white;
-  padding: 13px;
+  padding: clamp(9px, 1.5vw, 13px);
   border-radius: 50%;
   box-shadow: 0 12px 28px rgba(255, 99, 71, 0.28);
   cursor: pointer;
   border: 1px solid #ffe0d8;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.floating-cart img {
+  display: block;
+  width: clamp(24px, 3.2vw, 32px);
 }
 
 .floating-cart:hover {
@@ -77,10 +82,10 @@
 
 .floating-cart .dot {
   position: absolute;
-  top: 5px;
-  right: 0;
-  width: 10px;
-  height: 10px;
+  top: clamp(3px, 0.5vw, 5px);
+  right: clamp(0px, 0.2vw, 2px);
+  width: clamp(8px, 1vw, 10px);
+  height: clamp(8px, 1vw, 10px);
   background-color: red;
   border-radius: 50%;
 }

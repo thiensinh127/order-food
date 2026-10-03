@@ -29,7 +29,7 @@
 }
 
 .foo-item-info {
-    padding: 20px;
+    padding: clamp(14px, 1.5vw, 20px);
 }
 
 .food-item-name-rating {
@@ -40,7 +40,7 @@
 }
 
 .food-item-name-rating p {
-    font-size: 20px;
+    font-size: clamp(16px, 1.3vw, 20px);
     font-weight: 500;
 }
 
@@ -55,7 +55,7 @@
 
 .food-item-price {
     color: tomato;
-    font-size: 22px;
+    font-size: clamp(18px, 1.5vw, 22px);
     font-weight: 500;
     margin: 10px 0;
 }
@@ -83,25 +83,46 @@
     right: 15px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 6px;
+    gap: clamp(5px, 0.8vw, 10px);
+    padding: clamp(5px, 0.7vw, 7px) clamp(7px, 1vw, 10px);
     border-radius: 50px;
-    background-color: white;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 8px 18px rgba(38, 49, 79, 0.14);
 }
 
 .food-item-counter img {
-    width: 30px;
+    width: clamp(22px, 2.3vw, 30px);
     cursor: pointer;
 }
 
+.food-item-counter p {
+    min-width: 14px;
+    text-align: center;
+    font-weight: 600;
+    font-size: clamp(14px, 1.4vw, 17px);
+}
+
 .food-item-clear {
-    width: 24px;
-    height: 24px;
     border: 0;
-    border-radius: 50%;
-    background: #fff0ed;
+    border-left: 1px solid #f0d8d2;
+    padding: 0 0 0 clamp(6px, 0.8vw, 9px);
+    background: transparent;
     color: #dd4d33;
-    font-size: 18px;
+    font-size: clamp(18px, 1.7vw, 22px);
+    font-weight: 500;
     line-height: 1;
     cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.food-item-clear:hover {
+    color: #b52f1d;
+    transform: scale(1.12);
+}
+
+@media (max-width: 420px) {
+    .food-item-counter {
+        bottom: 10px;
+        right: 10px;
+    }
 }
