@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { api } from "../api/client";
 import { fetchFoodPage, mergeFoodPages } from "../api/food";
+import { applyCartResponse, removeCartItem } from "../utils/cartState";
 import { StoreContext } from "./StoreContextDefinition";
 
 const LIMIT = 6;
@@ -21,8 +22,8 @@ const StoreContextProvider = ({ children }) => {
   const loadCartData = useCallback(async (authToken) => {
     const response = await api.get("/api/cart/get", { headers: { token: authToken } });
     if (response.data.success) {
-      setCartItems(response.data.cartData || {});
-      setCartFoodList(response.data.items || []);
+      setCartItems(applyCartResponse([], response.data).cartItems);
+      setCartFoodList((previous) => applyCartResponse(previous, response.data).cartFoodList);
     }
   }, []);
 
@@ -57,11 +58,7 @@ const StoreContextProvider = ({ children }) => {
   };
 
   const clearFromCart = async (itemId) => {
-    setCartItems((previous) => {
-      const rest = { ...previous };
-      delete rest[itemId];
-      return rest;
-    });
+    setCartItems((previous) => removeCartItem(previous, itemId));
     setCartFoodList((previous) => previous.filter((food) => food._id !== itemId));
     if (!token) return;
     await api.post("/api/cart/remove", { itemId, removeAll: true }, { headers: { token } });

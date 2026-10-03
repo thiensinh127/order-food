@@ -4,7 +4,7 @@ import { StoreContext } from "../../context/StoreContextDefinition";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { cartItems, cartFoodList, removeFromCart, getTotalCartAmount, url } =
+  const { cartItems, cartFoodList, clearFromCart, getTotalCartAmount, url } =
     useContext(StoreContext);
 
   const navigate = useNavigate();
@@ -28,7 +28,6 @@ const Cart = () => {
           <p>Total</p>
           <p>Remove</p>
         </div>
-        <br />
         <hr />
         {cartFoodList.map((item) => {
           if (cartItems[item._id] > 0) {
@@ -36,17 +35,17 @@ const Cart = () => {
               <div key={item._id}>
                 <div className="cart-items-title cart-items-item">
                   <img src={url + "/images/" + item.image} alt={item.name} />
-                  <p>{item.name}</p>
-                  <p>${item.price}</p>
-                  <p>{cartItems[item._id]}</p>
-                  <p>${cartItems[item._id] * item.price}</p>
+                  <p data-label="Title">{item.name}</p>
+                  <p data-label="Price">${item.price}</p>
+                  <p data-label="Quantity">{cartItems[item._id]}</p>
+                  <p data-label="Total">${cartItems[item._id] * item.price}</p>
                   <button
                     type="button"
-                    onClick={() => removeFromCart(item._id)}
+                    onClick={() => clearFromCart(item._id)}
                     className="cart-remove"
                     aria-label={`Remove ${item.name} from cart`}
                   >
-                    ×
+                    <span aria-hidden="true">×</span>
                   </button>
                 </div>
                 <hr />
@@ -76,7 +75,7 @@ const Cart = () => {
               </b>
             </div>
           </div>
-          <button onClick={() => navigate("/order")}>
+          <button type="button" onClick={() => navigate("/order")}>
             PROCEED TO CHECKOUT
           </button>
         </div>
@@ -85,7 +84,7 @@ const Cart = () => {
             <p>If you have a promocode, Enter it here</p>
             <div className="cart-promocode-input">
               <input type="text" placeholder="promo code" />
-              <button>Submit</button>
+              <button type="button">Submit</button>
             </div>
           </div>
         </div>
