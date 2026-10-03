@@ -2,6 +2,45 @@
     margin-top: 100px;
 }
 
+.cart-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+.cart-heading h1 {
+    color: #26314f;
+    font-size: clamp(28px, 4vw, 42px);
+}
+
+.cart-eyebrow {
+    color: tomato;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin-bottom: 6px;
+}
+
+.cart-heading > span {
+    color: #65708d;
+    background: #fff3f0;
+    border-radius: 999px;
+    padding: 8px 12px;
+}
+
+.cart-panel,
+.cart-summary {
+    background: #fff;
+    border: 1px solid #f0e7e4;
+    border-radius: 18px;
+    box-shadow: 0 10px 35px rgba(38, 49, 79, 0.06);
+}
+
+.cart-panel {
+    padding: 22px;
+}
+
 .cart-items-title {
     display: grid;
     grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 0.5fr;
@@ -16,7 +55,11 @@
 }
 
 .cart-items-item img {
-    width: 50px;
+    width: 58px;
+    height: 58px;
+    object-fit: cover;
+    border-radius: 12px;
+    background: #fff3f0;
 }
 
 .cart hr {
@@ -25,8 +68,22 @@
     border: none;
 }
 
-.cart-items-item .cross {
+.cart-remove {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    color: #dd4d33;
+    background: #fff0ed;
+    font-size: 22px;
+    line-height: 1;
     cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.cart-remove:hover {
+    background: #ffdcd5;
+    transform: scale(1.08);
 }
 
 .cart-bottom {
@@ -41,6 +98,11 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+.cart-summary {
+    padding: 26px;
+    align-self: flex-start;
 }
 
 .cart-total-details {
@@ -59,8 +121,15 @@
     background-color: tomato;
     width: max(15vw, 200px);
     padding: 12px 0px;
-    border-radius: 4px;
+    border-radius: 10px;
     cursor: pointer;
+    box-shadow: 0 8px 16px rgba(255, 99, 71, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cart-total button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px rgba(255, 99, 71, 0.32);
 }
 
 .cart-promocode {
@@ -99,6 +168,25 @@
 }
 
 @media(max-width:750px) {
+    .cart {
+        margin-top: 55px;
+    }
+
+    .cart-heading {
+        align-items: flex-start;
+        gap: 12px;
+        flex-direction: column;
+    }
+
+    .cart-panel {
+        padding: 14px;
+        overflow-x: auto;
+    }
+
+    .cart-items-title {
+        min-width: 610px;
+    }
+
     .cart-bottom {
         flex-direction: column-reverse;
     }

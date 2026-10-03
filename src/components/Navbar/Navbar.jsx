@@ -74,7 +74,7 @@ const Navbar = ({ setShowLogin }) => {
         )}
       </div>
       {getTotalCartAmount() !== 0 && (
-        <div className="floating-cart">
+        <div className="floating-cart" data-cart-target>
           <Link to="/cart">
             <img src={assets.basket_icon} alt="cart-icon" />
           </Link>

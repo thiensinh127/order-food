@@ -62,10 +62,17 @@
   right: 20px;
   z-index: 999;
   background-color: white;
-  padding: 10px;
+  padding: 13px;
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 28px rgba(255, 99, 71, 0.28);
   cursor: pointer;
+  border: 1px solid #ffe0d8;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.floating-cart:hover {
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 16px 32px rgba(255, 99, 71, 0.35);
 }
 
 .floating-cart .dot {

@@ -8,10 +8,18 @@ const Cart = () => {
     useContext(StoreContext);
 
   const navigate = useNavigate();
+  const itemCount = Object.values(cartItems).reduce((total, quantity) => total + quantity, 0);
 
   return (
     <div className="cart">
-      <div className="cart-items">
+      <div className="cart-heading">
+        <div>
+          <p className="cart-eyebrow">YOUR ORDER</p>
+          <h1>Shopping cart</h1>
+        </div>
+        <span>{itemCount} {itemCount === 1 ? "item" : "items"}</span>
+      </div>
+      <div className="cart-items cart-panel">
         <div className="cart-items-title">
           <p>Items</p>
           <p>Title</p>
@@ -32,9 +40,14 @@ const Cart = () => {
                   <p>${item.price}</p>
                   <p>{cartItems[item._id]}</p>
                   <p>${cartItems[item._id] * item.price}</p>
-                  <p onClick={() => removeFromCart(item._id)} className="cross">
-                    x
-                  </p>
+                  <button
+                    type="button"
+                    onClick={() => removeFromCart(item._id)}
+                    className="cart-remove"
+                    aria-label={`Remove ${item.name} from cart`}
+                  >
+                    ×
+                  </button>
                 </div>
                 <hr />
               </div>
@@ -43,7 +56,7 @@ const Cart = () => {
         })}
       </div>
       <div className="cart-bottom">
-        <div className="cart-total">
+        <div className="cart-total cart-summary">
           <h2>Cart Totals</h2>
           <div>
             <div className="cart-total-details">
