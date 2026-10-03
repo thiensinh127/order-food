@@ -3,7 +3,7 @@ import "./LoginPopup.css";
 import { assets } from "../../assets/assets";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { StoreContext } from "../../context/StoreContext";
+import { StoreContext } from "../../context/StoreContextDefinition";
 const LoginPopup = ({ setShowLogin }) => {
   const { url, setToken } = useContext(StoreContext);
   const [currentState, setCurrentState] = useState("Login");
