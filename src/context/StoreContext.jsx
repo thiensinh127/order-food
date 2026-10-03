@@ -1,8 +1,7 @@
-import React, { createContext, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { api } from "../api/client";
 import { fetchFoodPage, mergeFoodPages } from "../api/food";
-
-export const StoreContext = createContext(null);
+import { StoreContext } from "./StoreContextDefinition";
 
 const LIMIT = 6;
 
