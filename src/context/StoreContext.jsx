@@ -48,6 +48,17 @@ const StoreContextProvider = ({ children }) => {
     await loadCartData(token);
   };
 
+  const clearFromCart = async (itemId) => {
+    setCartItems((previous) => {
+      const rest = { ...previous };
+      delete rest[itemId];
+      return rest;
+    });
+    if (!token) return;
+    await api.post("/api/cart/remove", { itemId, removeAll: true }, { headers: { token } });
+    await loadCartData(token);
+  };
+
   const selectCategory = useCallback((nextCategory) => {
     setCategory(nextCategory);
     setPage(1);
@@ -94,7 +105,7 @@ const StoreContextProvider = ({ children }) => {
   ), [cartFoodList, cartItems]);
 
   const contextValue = {
-    food_list, cartFoodList, cartItems, setCartItems, addToCart, removeFromCart,
+    food_list, cartFoodList, cartItems, setCartItems, addToCart, removeFromCart, clearFromCart,
     getTotalCartAmount, url, token, setToken, category, selectCategory,
     page, setPage, hasMore, loading, foodError, retryFoodList,
   };
