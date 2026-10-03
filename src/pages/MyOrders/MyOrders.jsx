@@ -6,6 +6,7 @@ import { StoreContext } from "../../context/StoreContextDefinition";
 import axios from "axios";
 import { useEffect } from "react";
 import { assets } from "../../assets/assets";
+import BackButton from "../../components/BackButton/BackButton";
 const MyOrders = () => {
   const { url, token } = useContext(StoreContext);
   const [data, setData] = useState([]);
@@ -28,6 +29,7 @@ const MyOrders = () => {
 
   return (
     <div className="my-orders">
+      <BackButton label="Back to menu" />
       <h2>My Orders</h2>
       <div className="container">
         {data.map((order, index) => {

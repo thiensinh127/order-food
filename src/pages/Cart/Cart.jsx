@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContextDefinition";
 import { useNavigate } from "react-router-dom";
+import BackButton from "../../components/BackButton/BackButton";
 
 const Cart = () => {
   const { cartItems, cartFoodList, clearFromCart, getTotalCartAmount, url } =
@@ -14,6 +15,7 @@ const Cart = () => {
     <div className="cart">
       <div className="cart-heading">
         <div>
+          <BackButton label="Back to menu" />
           <p className="cart-eyebrow">YOUR ORDER</p>
           <h1>Shopping cart</h1>
         </div>

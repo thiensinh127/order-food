@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContextDefinition";
 import { createOrderPayload } from "../../utils/orderPayload";
+import BackButton from "../../components/BackButton/BackButton";
 import "./PlaceOrder.css";
 
 const DELIVERY_FEE = 2;
@@ -56,6 +57,7 @@ const PlaceOrder = () => {
   return (
     <form onSubmit={onPlaceOrder} className="place-order">
       <header className="checkout-heading">
+        <BackButton fallback="/cart" label="Back to cart" />
         <p>CHECKOUT</p>
         <h1>Delivery details</h1>
         <ol aria-label="Checkout progress"><li>Cart</li><li className="current" aria-current="step">Delivery</li><li>Payment</li></ol>

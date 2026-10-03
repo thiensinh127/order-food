@@ -1,0 +1,20 @@
+.back-button {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #dce1ea;
+  border-radius: 999px;
+  padding: 0 14px;
+  color: #35425f;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.back-button:hover { border-color: #ffb7aa; color: #e6523b; transform: translateX(-2px); }
+.back-button:focus-visible { outline: 3px solid rgba(255, 104, 79, .3); outline-offset: 3px; border-radius: 4px; }

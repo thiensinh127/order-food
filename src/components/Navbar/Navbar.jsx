@@ -1,14 +1,16 @@
 import React, { useContext, useState } from "react";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContextDefinition";
+import { shouldShowFloatingCart } from "../../utils/navigation";
 const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("home");
 
   const { token, setToken, cartItemCount } = useContext(StoreContext);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -73,7 +75,7 @@ const Navbar = ({ setShowLogin }) => {
           </div>
         )}
       </div>
-      {cartItemCount > 0 && (
+      {cartItemCount > 0 && shouldShowFloatingCart(location.pathname) && (
         <div className="floating-cart" data-cart-target>
           <Link to="/cart">
             <img src={assets.basket_icon} alt="cart-icon" />

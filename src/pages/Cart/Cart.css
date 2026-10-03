@@ -25,6 +25,7 @@
 }
 
 .cart-heading h1 { font-size: clamp(32px, 4vw, 46px); }
+.cart-heading .back-button { margin-bottom: 20px; }
 
 .cart-eyebrow {
   margin: 0 0 8px;
