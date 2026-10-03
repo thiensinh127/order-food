@@ -2,11 +2,11 @@ import React, { useContext, useState } from "react";
 import "./Navbar.css";
 import { assets } from "../../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
-import { StoreContext } from "../../context/StoreContext";
+import { StoreContext } from "../../context/StoreContextDefinition";
 const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("home");
 
-  const { token, setToken, getTotalCartAmount } = useContext(StoreContext);
+  const { token, setToken, cartItemCount } = useContext(StoreContext);
 
   const navigate = useNavigate();
 
@@ -73,8 +73,8 @@ const Navbar = ({ setShowLogin }) => {
           </div>
         )}
       </div>
-      {getTotalCartAmount() !== 0 && (
-        <div className="floating-cart">
+      {cartItemCount > 0 && (
+        <div className="floating-cart" data-cart-target>
           <Link to="/cart">
             <img src={assets.basket_icon} alt="cart-icon" />
           </Link>

@@ -1,17 +1,25 @@
 import React, { useContext } from "react";
 import "./Cart.css";
-import { StoreContext } from "../../context/StoreContext";
+import { StoreContext } from "../../context/StoreContextDefinition";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
-  const { cartItems, food_list, removeFromCart, getTotalCartAmount, url } =
+  const { cartItems, cartFoodList, removeFromCart, getTotalCartAmount, url } =
     useContext(StoreContext);
 
   const navigate = useNavigate();
+  const itemCount = Object.values(cartItems).reduce((total, quantity) => total + quantity, 0);
 
   return (
     <div className="cart">
-      <div className="cart-items">
+      <div className="cart-heading">
+        <div>
+          <p className="cart-eyebrow">YOUR ORDER</p>
+          <h1>Shopping cart</h1>
+        </div>
+        <span>{itemCount} {itemCount === 1 ? "item" : "items"}</span>
+      </div>
+      <div className="cart-items cart-panel">
         <div className="cart-items-title">
           <p>Items</p>
           <p>Title</p>
@@ -22,19 +30,24 @@ const Cart = () => {
         </div>
         <br />
         <hr />
-        {food_list.map((item, index) => {
+        {cartFoodList.map((item) => {
           if (cartItems[item._id] > 0) {
             return (
-              <div key={index}>
-                <div key={index} className="cart-items-title cart-items-item">
+              <div key={item._id}>
+                <div className="cart-items-title cart-items-item">
                   <img src={url + "/images/" + item.image} alt={item.name} />
                   <p>{item.name}</p>
                   <p>${item.price}</p>
                   <p>{cartItems[item._id]}</p>
                   <p>${cartItems[item._id] * item.price}</p>
-                  <p onClick={() => removeFromCart(item._id)} className="cross">
-                    x
-                  </p>
+                  <button
+                    type="button"
+                    onClick={() => removeFromCart(item._id)}
+                    className="cart-remove"
+                    aria-label={`Remove ${item.name} from cart`}
+                  >
+                    ×
+                  </button>
                 </div>
                 <hr />
               </div>
@@ -43,7 +56,7 @@ const Cart = () => {
         })}
       </div>
       <div className="cart-bottom">
-        <div className="cart-total">
+        <div className="cart-total cart-summary">
           <h2>Cart Totals</h2>
           <div>
             <div className="cart-total-details">

@@ -9,8 +9,15 @@
 
 .food-display-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 280px));
+    justify-content: space-between;
     margin-top: 30px;
-    gap: 30px;
-    row-gap: 20px;
+    gap: 24px;
+}
+
+@media (max-width: 750px) {
+    .food-display-list {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 155px), 1fr));
+        gap: 14px;
+    }
 }

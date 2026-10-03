@@ -1,142 +1,127 @@
-import React, { createContext } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
-import { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { api } from "../api/client";
+import { fetchFoodPage, mergeFoodPages } from "../api/food";
+import { StoreContext } from "./StoreContextDefinition";
 
-export const StoreContext = createContext(null);
+const LIMIT = 6;
 
-const StoreContextProvider = (props) => {
+const StoreContextProvider = ({ children }) => {
   const url = import.meta.env.VITE_API_URL;
-  const [token, setToken] = React.useState("");
-  const [cartItems, setCartItems] = React.useState([]);
-  const [food_list, setFoodList] = React.useState([]);
-  
-  // Pagination State
-  const [page, setPage] = React.useState(1);
-  const [hasMore, setHasMore] = React.useState(true);
-  const [loading, setLoading] = React.useState(false);
-  const limit = 6;
+  const [token, setToken] = useState("");
+  const [cartItems, setCartItems] = useState({});
+  const [cartFoodList, setCartFoodList] = useState([]);
+  const [food_list, setFoodList] = useState([]);
+  const [category, setCategory] = useState("All");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [foodError, setFoodError] = useState("");
+  const [reloadKey, setReloadKey] = useState(0);
 
-  const addToCart = async (itemId) => {
-    if (!cartItems[itemId]) {
-      setCartItems((prev) => ({ ...prev, [itemId]: 1 }));
-    } else {
-      setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
+  const loadCartData = useCallback(async (authToken) => {
+    const response = await api.get("/api/cart/get", { headers: { token: authToken } });
+    if (response.data.success) {
+      setCartItems(response.data.cartData || {});
+      setCartFoodList(response.data.items || []);
     }
-    if (token) {
-      await axios.post(
-        `${url}/api/cart/add`,
-        { itemId },
-        { headers: { token } }
-      );
+  }, []);
+
+  const addToCart = async (itemId, item) => {
+    setCartItems((previous) => ({ ...previous, [itemId]: (previous[itemId] || 0) + 1 }));
+    if (item) {
+      setCartFoodList((previous) => (
+        previous.some((food) => food._id === itemId) ? previous : [...previous, item]
+      ));
     }
+    if (!token) return;
+    await api.post("/api/cart/add", { itemId }, { headers: { token } });
+    await loadCartData(token);
   };
 
   const removeFromCart = async (itemId) => {
-    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
-    if (token) {
-      await axios.post(
-        `${url}/api/cart/remove`,
-        { itemId },
-        { headers: { token } }
-      );
-    }
-  };
-
-  const fetchFoodList = async (pageNum) => {
-    try {
-      setLoading(true);
-      const res = await axios.get(`${url}/api/food/list?page=${pageNum}&limit=${limit}`);
-      if (res.data.success) {
-        if (pageNum === 1) {
-          setFoodList(res.data.data);
-        } else {
-          setFoodList((prev) => [...prev, ...res.data.data]);
-        }
-        
-        // Check if we have loaded all items
-        // Since backend returns total, we can use it, or just check if returned data < limit
-        if (res.data.data.length < limit || (res.data.total && (food_list.length + res.data.data.length >= res.data.total))) {
-             // Logic check: if we just fetched, and current total (prev + new) >= total available, then no more.
-             // Simpler check: if we got fewer items than limit, we are done.
-             // Also if we got equal items but that was the last page.
-             // Let's rely on data.length < limit first. 
-             // BUT if total is exact multiple of limit, data.length == limit.
-             // Better to use total if available.
-             const currentTotalLoaded = pageNum === 1 ? res.data.data.length : food_list.length + res.data.data.length;
-             if (res.data.total && currentTotalLoaded >= res.data.total) {
-                setHasMore(false);
-             } else if (res.data.data.length === 0) {
-                 setHasMore(false);
-             }
-        }
-      } else {
-        toast.error(res.data.message);
+    setCartItems((previous) => {
+      const quantity = (previous[itemId] || 0) - 1;
+      if (quantity <= 0) {
+        const rest = { ...previous };
+        delete rest[itemId];
+        return rest;
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error fetching food list");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadCartData = async (token) => {
-    const res = await axios.get(`${url}/api/cart/get`, {
-      headers: { token },
+      return { ...previous, [itemId]: quantity };
     });
-    setCartItems(res.data.cartData);
+    if (cartItems[itemId] <= 1) {
+      setCartFoodList((previous) => previous.filter((food) => food._id !== itemId));
+    }
+    if (!token) return;
+    await api.post("/api/cart/remove", { itemId }, { headers: { token } });
+    await loadCartData(token);
   };
 
-  const getTotalCartAmount = () => {
-    let totalAmount = 0;
-    for (const item in cartItems) {
-      if (cartItems[item] > 0) {
-        let itemInfo = food_list.find((foodItem) => foodItem._id === item);
-        if (itemInfo) { // Added check because item might not be loaded yet or removed
-            totalAmount += cartItems[item] * itemInfo.price;
-        }
-      }
-    }
-    return totalAmount;
+  const clearFromCart = async (itemId) => {
+    setCartItems((previous) => {
+      const rest = { ...previous };
+      delete rest[itemId];
+      return rest;
+    });
+    setCartFoodList((previous) => previous.filter((food) => food._id !== itemId));
+    if (!token) return;
+    await api.post("/api/cart/remove", { itemId, removeAll: true }, { headers: { token } });
+    await loadCartData(token);
   };
 
-  // Effect to load data on page change
-  useEffect(() => {
-    fetchFoodList(page);
-  }, [page]);
-
-  useEffect(() => {
-    async function loadData() {
-      // fetchFoodList is now controlled by page state effect
-      if (localStorage.getItem("token")) {
-        setToken(localStorage.getItem("token"));
-        await loadCartData(localStorage.getItem("token"));
-      }
-    }
-    loadData();
+  const selectCategory = useCallback((nextCategory) => {
+    setCategory(nextCategory);
+    setPage(1);
+    setFoodList([]);
+    setHasMore(true);
+    setFoodError("");
   }, []);
 
+  const retryFoodList = useCallback(() => {
+    setFoodError("");
+    setReloadKey((value) => value + 1);
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const loadFood = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchFoodPage({ page, limit: LIMIT, category, signal: controller.signal });
+        if (!data.success) throw new Error(data.message || "Unable to load the menu");
+        setFoodList((previous) => (page === 1 ? data.data : mergeFoodPages(previous, data.data)));
+        setHasMore(page * LIMIT < data.total);
+      } catch (error) {
+        if (error.code !== "ERR_CANCELED") setFoodError("Menu is unavailable. Please try again.");
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+    loadFood();
+    return () => controller.abort();
+  }, [category, page, reloadKey]);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) setToken(storedToken);
+  }, []);
+
+  useEffect(() => {
+    if (token) loadCartData(token);
+  }, [token, loadCartData]);
+
+  const getTotalCartAmount = useCallback(() => (
+    cartFoodList.reduce((total, item) => total + (cartItems[item._id] || 0) * item.price, 0)
+  ), [cartFoodList, cartItems]);
+
+  const cartItemCount = Object.values(cartItems).reduce((total, quantity) => total + quantity, 0);
+
   const contextValue = {
-    food_list,
-    cartItems,
-    setCartItems,
-    addToCart,
-    removeFromCart,
-    getTotalCartAmount,
-    url,
-    token,
-    setToken,
-    page,
-    setPage,
-    hasMore,
-    loading
+    food_list, cartFoodList, cartItems, setCartItems, addToCart, removeFromCart, clearFromCart,
+    getTotalCartAmount, cartItemCount, url, token, setToken, category, selectCategory,
+    page, setPage, hasMore, loading, foodError, retryFoodList,
   };
-  return (
-    <StoreContext.Provider value={contextValue}>
-      {props.children}
-    </StoreContext.Provider>
-  );
+
+  return <StoreContext.Provider value={contextValue}>{children}</StoreContext.Provider>;
 };
 
 export default StoreContextProvider;
