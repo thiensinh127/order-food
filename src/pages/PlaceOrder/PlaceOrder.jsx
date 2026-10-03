@@ -6,7 +6,7 @@ import "./PlaceOrder.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 const PlaceOrder = () => {
-  const { getTotalCartAmount, token, food_list, cartItems, url } =
+  const { getTotalCartAmount, token, cartFoodList, cartItems, url } =
     useContext(StoreContext);
 
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const PlaceOrder = () => {
   const onPlaceOrder = async (e) => {
     e.preventDefault();
     let orderItems = [];
-    food_list.map((item) => {
+    cartFoodList.map((item) => {
       if (cartItems[item._id] > 0) {
         let itemInfo = item;
         itemInfo["quantity"] = cartItems[item._id];

@@ -6,6 +6,11 @@ export const createFoodListParams = ({ page, limit, category }) => {
   return params;
 };
 
+export const mergeFoodPages = (currentFoods, nextFoods) => {
+  const seen = new Set(currentFoods.map((food) => food._id));
+  return [...currentFoods, ...nextFoods.filter((food) => !seen.has(food._id))];
+};
+
 export const fetchFoodPage = async ({ page, limit, category, signal }) => {
   const params = createFoodListParams({ page, limit, category });
   const response = await getWithRetry(
