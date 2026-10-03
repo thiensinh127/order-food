@@ -1,187 +1,84 @@
 import axios from "axios";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { StoreContext } from "../../context/StoreContextDefinition";
-import "./PlaceOrder.css";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { StoreContext } from "../../context/StoreContextDefinition";
+import { createOrderPayload } from "../../utils/orderPayload";
+import "./PlaceOrder.css";
+
+const DELIVERY_FEE = 2;
+const initialAddress = { firstName: "", lastName: "", email: "", street: "", city: "", state: "", zipcode: "", country: "", phone: "" };
+
 const PlaceOrder = () => {
-  const { getTotalCartAmount, token, cartFoodList, cartItems, url } =
-    useContext(StoreContext);
-
+  const { getTotalCartAmount, token, cartFoodList, cartItems, url } = useContext(StoreContext);
   const navigate = useNavigate();
+  const [data, setData] = useState(initialAddress);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState("");
+  const subtotal = getTotalCartAmount();
+  const deliveryFee = subtotal === 0 ? 0 : DELIVERY_FEE;
+  const total = subtotal + deliveryFee;
+  const itemCount = Object.values(cartItems).reduce((sum, quantity) => sum + quantity, 0);
 
-  const [data, setData] = React.useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    street: "",
-    city: "",
-    state: "",
-    zipcode: "",
-    country: "",
-    phone: "",
-  });
+  const onChangeHandler = ({ target: { name, value } }) => setData((previous) => ({ ...previous, [name]: value }));
 
-  const onChangeHandler = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setData({ ...data, [name]: value });
-  };
-
-  const onPlaceOrder = async (e) => {
-    e.preventDefault();
-    let orderItems = [];
-    cartFoodList.map((item) => {
-      if (cartItems[item._id] > 0) {
-        let itemInfo = item;
-        itemInfo["quantity"] = cartItems[item._id];
-        orderItems.push(itemInfo);
+  const onPlaceOrder = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setSubmissionError("");
+    try {
+      const response = await axios.post(
+        `${url}/api/order/create`,
+        createOrderPayload({ items: cartFoodList, cartItems, address: data, subtotal }),
+        { headers: { token } },
+      );
+      if (response.data.success) {
+        toast.success(response.data.message);
+        window.location.replace(response.data.session_url);
+        return;
       }
-    });
-    let orderData = {
-      address: data,
-      items: orderItems,
-      amount: getTotalCartAmount() + 2,
-    };
-    let res = await axios.post(`${url}/api/order/create`, orderData, {
-      headers: { token },
-    });
-    if (res.data.success) {
-      const { session_url } = res.data;
-      window.location.replace(session_url);
-      toast.success(res.data.message);
-      setData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        street: "",
-        city: "",
-        state: "",
-        zipcode: "",
-        country: "",
-        phone: "",
-      });
-    } else {
-      toast.error("Error");
+      setSubmissionError("We couldn't start payment. Please try again.");
+    } catch {
+      setSubmissionError("We couldn't start payment. Please check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   useEffect(() => {
-    if (!token) {
-      navigate("/cart");
-    } else if (getTotalCartAmount() === 0) {
-      navigate("/cart");
-    }
-  }, [token, getTotalCartAmount, navigate]);
+    if (!token || subtotal === 0) navigate("/cart");
+  }, [token, subtotal, navigate]);
+
+  const field = (label, name, autoComplete, type = "text") => (
+    <label>{label}<input required name={name} autoComplete={autoComplete} onChange={onChangeHandler} value={data[name]} type={type} /></label>
+  );
 
   return (
     <form onSubmit={onPlaceOrder} className="place-order">
-      <div className="place-order-left">
-        <p className="title">Delivery Information</p>
-        <div className="multi-fields">
-          <input
-            required
-            name="firstName"
-            onChange={onChangeHandler}
-            value={data.firstName}
-            type="text"
-            placeholder="First name"
-          />
-          <input
-            required
-            name="lastName"
-            onChange={onChangeHandler}
-            value={data.lastName}
-            type="text"
-            placeholder="Last name"
-          />
+      <header className="checkout-heading">
+        <p>CHECKOUT</p>
+        <h1>Delivery details</h1>
+        <ol aria-label="Checkout progress"><li>Cart</li><li className="current" aria-current="step">Delivery</li><li>Payment</li></ol>
+      </header>
+      <section className="place-order-left" aria-labelledby="delivery-title">
+        <div className="checkout-section-heading"><div><p className="section-kicker">STEP 1 OF 2</p><h2 id="delivery-title">Where should we deliver?</h2></div><p>Fields marked required are needed for delivery.</p></div>
+        <div className="multi-fields">{field("First name", "firstName", "given-name")}{field("Last name", "lastName", "family-name")}</div>
+        {field("Email address", "email", "email", "email")}
+        {field("Street address", "street", "street-address")}
+        <div className="multi-fields">{field("City", "city", "address-level2")}{field("State / Province", "state", "address-level1")}</div>
+        <div className="multi-fields">{field("Postal code", "zipcode", "postal-code")}{field("Country", "country", "country-name")}</div>
+        {field("Phone number", "phone", "tel", "tel")}
+      </section>
+      <aside className="place-order-right" aria-labelledby="summary-title">
+        <div className="order-summary">
+          <div className="order-summary-heading"><div><p className="section-kicker">YOUR ORDER</p><h2 id="summary-title">Order summary</h2></div><span>{itemCount} {itemCount === 1 ? "item" : "items"}</span></div>
+          <div className="order-lines">{cartFoodList.filter((item) => cartItems[item._id] > 0).map((item) => <div key={item._id}><span>{item.name} × {cartItems[item._id]}</span><b>${item.price * cartItems[item._id]}</b></div>)}</div>
+          <div className="summary-totals"><div><span>Subtotal</span><span>${subtotal}</span></div><div><span>Delivery</span><span>${deliveryFee}</span></div><div className="summary-total"><b>Total</b><b>${total}</b></div></div>
+          {submissionError && <p className="submission-error" role="alert">{submissionError}</p>}
+          <button type="submit" disabled={isSubmitting}>{isSubmitting ? "Opening secure payment…" : "Proceed to payment"}</button>
+          <p className="secure-note">🔒 Secure checkout. You will be redirected to payment.</p>
         </div>
-        <input
-          required
-          name="email"
-          onChange={onChangeHandler}
-          value={data.email}
-          type="email"
-          placeholder="Email address"
-        />
-        <input
-          required
-          name="street"
-          onChange={onChangeHandler}
-          value={data.street}
-          type="text"
-          placeholder="Street"
-        />
-        <div className="multi-fields">
-          <input
-            required
-            name="city"
-            onChange={onChangeHandler}
-            value={data.city}
-            type="text"
-            placeholder="City"
-          />
-          <input
-            required
-            name="state"
-            onChange={onChangeHandler}
-            value={data.state}
-            type="text"
-            placeholder="State"
-          />
-        </div>
-        <div className="multi-fields">
-          <input
-            required
-            name="zipcode"
-            onChange={onChangeHandler}
-            value={data.zipcode}
-            type="text"
-            placeholder="Zip code"
-          />
-          <input
-            required
-            name="country"
-            onChange={onChangeHandler}
-            value={data.country}
-            type="text"
-            placeholder="Country"
-          />
-        </div>
-        <input
-          required
-          name="phone"
-          onChange={onChangeHandler}
-          value={data.phone}
-          type="text"
-          placeholder="Phone"
-        />
-      </div>
-      <div className="place-order-right">
-        <div className="cart-total">
-          <h2>Cart Totals</h2>
-          <div>
-            <div className="cart-total-details">
-              <p>Subtotal</p>
-              <p>${getTotalCartAmount()}</p>
-            </div>
-            <hr />
-            <div className="cart-total-details">
-              <p>Delivery Fee</p>
-              <p>${getTotalCartAmount() === 0 ? 0 : 2}</p>
-            </div>
-            <hr />
-            <div className="cart-total-details">
-              <b>Total</b>
-              <b>
-                ${getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}
-              </b>
-            </div>
-          </div>
-          <button type="submit">PROCEED TO PAYMENT</button>
-        </div>
-      </div>
+      </aside>
     </form>
   );
 };
