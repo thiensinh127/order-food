@@ -12,7 +12,7 @@
 
 .footer-content {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     width: 100%;
     gap: 80px;
 }
@@ -22,30 +22,25 @@
 }
 
 .footer-content-left,
-.footer-content-right,
-.footer-content-center {
+.footer-content-right {
     display: flex;
     flex-direction: column;
     align-self: start;
     gap: 20px;
 }
 
-.footer-content-left li,
-.footer-content-right li,
-.footer-content-center li {
+.footer-content-right li {
     list-style: none;
     margin-bottom: 10px;
     cursor: pointer;
 }
 
-.footer-content-right h2,
-.footer-content-center h2 {
+.footer-content-right h2 {
     color: white;
 }
 
-.footer-social-icons img {
-    width: 40px;
-    margin-right: 15px;
+.footer a:hover {
+    color: tomato;
 }
 
 .footer hr {
@@ -61,10 +56,6 @@
         display: flex;
         flex-direction: column;
         gap: 35px
-    }
-
-    .footer-content-right {
-        text-align: left;
     }
 
 }
