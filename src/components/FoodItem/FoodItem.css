@@ -3,13 +3,7 @@
     margin: auto;
     border-radius: 15px;
     box-shadow: 0px 0px 10px #00000015;
-    transition: transform 0.24s ease, box-shadow 0.24s ease;
     animation: fadeIn 1s;
-}
-
-.food-item:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 32px rgba(38, 49, 79, 0.14);
 }
 
 .food-item:hover .food-item-image {
@@ -23,6 +17,15 @@
     object-fit: cover;
     border-radius: 15px 15px 0 0;
     transition: transform 0.3s ease;
+}
+
+.food-item-image-button {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
 }
 
 .foo-item-info {
@@ -88,5 +91,17 @@
 
 .food-item-counter img {
     width: 30px;
+    cursor: pointer;
+}
+
+.food-item-clear {
+    width: 24px;
+    height: 24px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff0ed;
+    color: #dd4d33;
+    font-size: 18px;
+    line-height: 1;
     cursor: pointer;
 }

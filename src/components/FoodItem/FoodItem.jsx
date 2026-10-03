@@ -4,7 +4,7 @@ import { assets } from "../../assets/assets";
 import { StoreContext } from "../../context/StoreContextDefinition";
 import { animateProductToCart } from "../../utils/cartFlight";
 const FoodItem = ({ id, name, price, description, image }) => {
-  const { cartItems, addToCart, removeFromCart, url } =
+  const { cartItems, addToCart, removeFromCart, clearFromCart, url } =
     React.useContext(StoreContext);
   const imageRef = React.useRef(null);
 
@@ -20,12 +20,9 @@ const FoodItem = ({ id, name, price, description, image }) => {
   return (
     <div className="food-item">
       <div className="food-item-img-container">
-        <img
-          ref={imageRef}
-          className="food-item-image"
-          src={url + "/images/" + image}
-          alt={name}
-        />
+        <button type="button" className="food-item-image-button" onClick={handleAddToCart} aria-label={`Add ${name} to cart`}>
+          <img ref={imageRef} className="food-item-image" src={url + "/images/" + image} alt={name} />
+        </button>
         {!cartItems[id] ? (
           <img
             className="add"
@@ -46,6 +43,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
               alt="add"
               onClick={handleAddToCart}
             />
+            <button type="button" className="food-item-clear" onClick={() => clearFromCart(id)} aria-label={`Remove ${name} from cart`}>×</button>
           </div>
         )}
       </div>
