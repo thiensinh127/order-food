@@ -7,6 +7,7 @@ import { StoreContext } from "../../context/StoreContextDefinition";
 const LoginPopup = ({ setShowLogin }) => {
   const { url, setToken } = useContext(StoreContext);
   const [currentState, setCurrentState] = useState("Login");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [data, setData] = useState({
     name: "",
@@ -22,6 +23,8 @@ const LoginPopup = ({ setShowLogin }) => {
 
   const onLogin = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     let newUrl = url;
     if (currentState === "Login") {
       newUrl += `/api/user/login`;
@@ -29,14 +32,20 @@ const LoginPopup = ({ setShowLogin }) => {
       newUrl += `/api/user/register`;
     }
 
-    const res = await axios.post(newUrl, data);
-    if (res.data.success) {
-      setToken(res.data.token);
-      localStorage.setItem("token", res.data.token);
-      toast.success(res.data.message);
-      setShowLogin(false);
-    } else {
-      toast.error(res.data.message);
+    try {
+      const res = await axios.post(newUrl, data);
+      if (res.data.success) {
+        setToken(res.data.token);
+        localStorage.setItem("token", res.data.token);
+        toast.success(res.data.message);
+        setShowLogin(false);
+      } else {
+        toast.error(res.data.message || "Unable to continue. Please try again.");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Unable to connect. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,8 +91,8 @@ const LoginPopup = ({ setShowLogin }) => {
             required
           />
         </div>
-        <button type="submit">
-          {currentState === "Sign Up" ? "Create Account" : "Login"}
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Please wait…" : currentState === "Sign Up" ? "Create Account" : "Login"}
         </button>
         <div className="login-popup-condition">
           <input type="checkbox" required />

@@ -48,3 +48,12 @@ test("keeps mobile forms stable while the keyboard and autofill are active", asy
   assert.match(loginStyles, /font-size:\s*16px/);
   assert.match(checkoutStyles, /font-size:\s*16px/);
 });
+
+test("prevents duplicate login submissions and reports request failures", async () => {
+  const loginPopup = await source("../src/components/LoginPopup/LoginPopup.jsx");
+
+  assert.match(loginPopup, /const \[isSubmitting, setIsSubmitting\] = useState\(false\)/);
+  assert.match(loginPopup, /disabled=\{isSubmitting\}/);
+  assert.match(loginPopup, /catch \(error\) \{/);
+  assert.match(loginPopup, /toast\.error/);
+});
