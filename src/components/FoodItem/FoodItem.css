@@ -46,6 +46,7 @@
 
 .food-item-name-rating img {
     width: 70px;
+    height: auto;
 }
 
 .food-item-desc {
