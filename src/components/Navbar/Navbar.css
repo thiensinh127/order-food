@@ -13,7 +13,7 @@
 }
 
 .navbar .logo {
-  width: 150px;
+  width: 115px;
   height: auto;
 }
 
@@ -139,7 +139,7 @@
 
 @media (max-width: 1050px) {
   .navbar .logo {
-    width: 140px;
+    width: 115px;
   }
 
   .navbar-menu {
@@ -152,7 +152,7 @@
   }
 
   .navbar-right img {
-    width: 22px;
+    width: 18px;
   }
 
   .navbar button {
@@ -162,7 +162,7 @@
 
 @media (max-width: 900px) {
   .navbar .logo {
-    width: 120px;
+    width: 110px;
   }
 
   .navbar-menu {
@@ -175,7 +175,7 @@
   }
 
   .navbar-right img {
-    width: 20px;
+    width: 18px;
   }
 
   .navbar button {
