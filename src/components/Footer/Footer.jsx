@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-content-left">
           <a href="/" aria-label="Food Sinh home">
-            <img src={assets.logo} alt="Food Sinh" />
+            <img src={assets.logo} alt="Food Sinh" width={173} height={34} />
           </a>
           <p>
             Food Sinh makes discovering great food, ordering in seconds, and

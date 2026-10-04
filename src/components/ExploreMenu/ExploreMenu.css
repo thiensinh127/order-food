@@ -31,6 +31,7 @@
 .explore-menu-list-item img {
     width: 7.5vw;
     min-width: 80px;
+    height: auto;
     cursor: pointer;
     border-radius: 50px;
     transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;

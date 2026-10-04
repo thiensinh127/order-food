@@ -50,7 +50,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
       <div className="foo-item-info">
         <div className="food-item-name-rating">
           <p>{name}</p>
-          <img src={assets.rating_starts} alt="start" />
+          <img src={assets.rating_starts} alt="start" width={95} height={19} />
         </div>
         <p className="food-item-desc">{description}</p>
         <p className="food-item-price">${price}</p>
