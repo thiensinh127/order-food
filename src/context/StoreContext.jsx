@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { api } from "../api/client";
-import { fetchFoodPage, mergeFoodPages } from "../api/food";
+import { fetchFoodPage, getFoodPageLimit, mergeFoodPages } from "../api/food";
 import { applyCartResponse, removeCartItem } from "../utils/cartState";
 import { StoreContext } from "./StoreContextDefinition";
 
-const LIMIT = 6;
-
 const StoreContextProvider = ({ children }) => {
   const url = import.meta.env.VITE_API_URL;
+  const [foodPageLimit] = useState(() => getFoodPageLimit(window.matchMedia("(max-width: 750px)").matches));
   const [token, setToken] = useState("");
   const [cartItems, setCartItems] = useState({});
   const [cartFoodList, setCartFoodList] = useState([]);
@@ -83,10 +82,10 @@ const StoreContextProvider = ({ children }) => {
     const loadFood = async () => {
       setLoading(true);
       try {
-        const data = await fetchFoodPage({ page, limit: LIMIT, category, signal: controller.signal });
+        const data = await fetchFoodPage({ page, limit: foodPageLimit, category, signal: controller.signal });
         if (!data.success) throw new Error(data.message || "Unable to load the menu");
         setFoodList((previous) => (page === 1 ? data.data : mergeFoodPages(previous, data.data)));
-        setHasMore(page * LIMIT < data.total);
+        setHasMore(page * foodPageLimit < data.total);
       } catch (error) {
         if (error.code !== "ERR_CANCELED") setFoodError("Menu is unavailable. Please try again.");
       } finally {
@@ -95,7 +94,7 @@ const StoreContextProvider = ({ children }) => {
     };
     loadFood();
     return () => controller.abort();
-  }, [category, page, reloadKey]);
+  }, [category, foodPageLimit, page, reloadKey]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");

@@ -1,5 +1,7 @@
 import { api, getWithRetry } from "./client.js";
 
+export const getFoodPageLimit = (isMobile) => (isMobile ? 3 : 6);
+
 export const createFoodListParams = ({ page, limit, category }) => {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) });
   if (category && category !== "All") params.set("category", category);

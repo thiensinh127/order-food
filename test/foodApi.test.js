@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createFoodListParams, mergeFoodPages } from "../src/api/food.js";
+import { createFoodListParams, getFoodPageLimit, mergeFoodPages } from "../src/api/food.js";
+
+test("loads fewer food cards on mobile", () => {
+  assert.equal(getFoodPageLimit(true), 3);
+  assert.equal(getFoodPageLimit(false), 6);
+});
 
 test("omits the All category from a food-list query", () => {
   assert.equal(
