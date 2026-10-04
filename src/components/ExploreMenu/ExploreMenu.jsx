@@ -22,6 +22,8 @@ const ExploreMenu = ({ category, setCategory }) => {
               className={item.menu_name === category ? "active" : ""}
               src={item.menu_image}
               alt={item.menu_name}
+              width={131}
+              height={131}
             />
             <p>{item.menu_name}</p>
           </div>

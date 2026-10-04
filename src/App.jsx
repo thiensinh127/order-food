@@ -19,21 +19,22 @@ const App = () => {
       {showLogin ? <LoginPopup setShowLogin={setShowLogin} /> : <></>}
       <div className="app">
         <Navbar setShowLogin={setShowLogin} />
-        <Suspense fallback={<p>Loading…</p>}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/cart"
-            element={
-              <ProtectedRoute element={<Cart />} setShowLogin={setShowLogin} />
-            }
-          />
-
-          <Route path="/order" element={<PlaceOrder />} />
-          <Route path="/verify" element={<Verify />} />
-          <Route path="/myorders" element={<MyOrders />} />
-        </Routes>
-        </Suspense>
+        <main>
+          <Suspense fallback={<p>Loading…</p>}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route
+                path="/cart"
+                element={
+                  <ProtectedRoute element={<Cart />} setShowLogin={setShowLogin} />
+                }
+              />
+              <Route path="/order" element={<PlaceOrder />} />
+              <Route path="/verify" element={<Verify />} />
+              <Route path="/myorders" element={<MyOrders />} />
+            </Routes>
+          </Suspense>
+        </main>
       </div>
       <Footer />
     </>

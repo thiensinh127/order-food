@@ -21,7 +21,7 @@ const FoodItem = ({ id, name, price, description, image }) => {
     <div className="food-item">
       <div className="food-item-img-container">
         <button type="button" className="food-item-image-button" onClick={handleAddToCart} aria-label={`Add ${name} to cart`}>
-          <img ref={imageRef} className="food-item-image" src={url + "/images/" + image} alt={name} loading="lazy" decoding="async" />
+          <img ref={imageRef} className="food-item-image" src={url + "/images/" + image} alt={name} width={360} height={280} loading="lazy" decoding="async" />
         </button>
         {!cartItems[id] ? (
           <img

@@ -24,34 +24,10 @@ const Navbar = ({ setShowLogin }) => {
         <img src={assets.logo} alt="logo" className="logo" />
       </Link>
       <ul className="navbar-menu">
-        <Link
-          to="/"
-          onClick={() => setMenu("home")}
-          className={menu === "home" ? "active" : ""}
-        >
-          home
-        </Link>
-        <a
-          href="#explore-menu"
-          onClick={() => setMenu("menu")}
-          className={menu === "menu" ? "active" : ""}
-        >
-          menu
-        </a>
-        <a
-          href="#app-download"
-          onClick={() => setMenu("mobile-app")}
-          className={menu === "mobile-app" ? "active" : ""}
-        >
-          mobile-app
-        </a>
-        <a
-          href="#footer"
-          onClick={() => setMenu("contact")}
-          className={menu === "contact" ? "active" : ""}
-        >
-          contact us
-        </a>
+        <li><Link to="/" onClick={() => setMenu("home")} className={menu === "home" ? "active" : ""}>home</Link></li>
+        <li><a href="#explore-menu" onClick={() => setMenu("menu")} className={menu === "menu" ? "active" : ""}>menu</a></li>
+        <li><a href="#app-download" onClick={() => setMenu("mobile-app")} className={menu === "mobile-app" ? "active" : ""}>mobile-app</a></li>
+        <li><a href="#footer" onClick={() => setMenu("contact")} className={menu === "contact" ? "active" : ""}>contact us</a></li>
       </ul>
       <div className="navbar-right">
         <img src={assets.search_icon} alt="search" />
